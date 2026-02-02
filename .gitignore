@@ -1,0 +1,55 @@
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Models
+*.pth
+*.pt
+*.onnx
+
+# Data
+data/
+competition_data/
+*.csv
+!loso_results_improved.csv
+!history_*.csv
+
+# Environment
+.env
+.venv/
+venv/
+env/
+**/venv/
+**/.venv/
+**/env/
+**/ENV/
+
+# IDE
+.vscode/
+.idea/
+
+
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+ENV/
+env/
+
+
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git/index.lock
