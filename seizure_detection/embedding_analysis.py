@@ -11,9 +11,7 @@ from torch.utils.data import DataLoader
 from src.dataset import EEGDataset, get_all_file_paths, MAX_CHANNELS
 from src.models.baseline_cnn import BaselineCNN
 
-# ============================================================================
-# CONFIGURATION
-# ============================================================================
+
 DATA_ROOT = r"c:\Users\Asus\Downloads\clips\Volumes\Seagate\seizure_detection\competition_data\clips"
 BASE_MODEL_PATH = "seizure_detection/base_model_independent.pth"
 SUBJECTS_TO_ANALYZE = ['Patient_7', 'Patient_8', 'Patient_1']
@@ -24,7 +22,6 @@ def extract_embeddings():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"[*] Extraction Device: {device}")
     
-    # 1. Load Model
     model = BaselineCNN(num_channels=MAX_CHANNELS).to(device)
     model.load_state_dict(torch.load(BASE_MODEL_PATH, map_location=device))
     model.eval()

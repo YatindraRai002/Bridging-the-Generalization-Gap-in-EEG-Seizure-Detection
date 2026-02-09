@@ -11,9 +11,6 @@ from src.dataset import EEGDataset, get_all_file_paths, MAX_CHANNELS
 from src.models.baseline_cnn import BaselineCNN
 from src.train import train_epoch, validate
 
-# ============================================================================
-# CONFIGURATION
-# ============================================================================
 DATA_ROOT = r"c:\Users\Asus\Downloads\clips\Volumes\Seagate\seizure_detection\competition_data\clips"
 BATCH_SIZE = 128
 EPOCHS = 50
