@@ -10,8 +10,6 @@
 
 **A Hybrid Vision Transformer with Adversarial Subject Disentanglement for Cross-Patient EEG Seizure Detection**
 
-*C. Vaishnavi · Yatindra Rai · Thanigaivelu P.S.*  
-*Department of Computing Technologies, SRMIST, Kattankulathur, India*
 
 </div>
 
