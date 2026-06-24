@@ -13,10 +13,10 @@ def load_eeg_file(file_path):
 
     try:
         mat = scipy.io.loadmat(file_path)
-        
+
         if 'data' in mat and 'freq' in mat:
-            raw_eeg = mat['data'] # Shape appears to be (channels, time) e.g. (68, 500)
-            # fs might be (1,) or (1,1) or scalar
+            raw_eeg = mat['data']
+
             if mat['freq'].size == 1:
                 fs = mat['freq'].item()
             else:
@@ -26,14 +26,13 @@ def load_eeg_file(file_path):
             raw_eeg = ds['data'].T
             fs = ds['iEEGsamplingRate'][0][0]
         else:
-            # Try to find any key that looks like data
+
             valid_keys = [k for k in mat.keys() if not k.startswith('__')]
             if len(valid_keys) > 0:
-                 # Heuristic: largest array is data?
-                 # For now, just raise
+
                  raise ValueError(f"Unknown structure. Keys: {valid_keys}")
             raise ValueError(f"Unknown .mat structure in {file_path}")
-            
+
         return raw_eeg.astype(np.float32), float(fs)
     except Exception as e:
         print(f"Error loading {file_path}: {e}")
@@ -73,10 +72,10 @@ def generate_spectrogram(eeg, fs, nperseg=256, noverlap=224):
     specs = []
     for ch_idx in range(eeg.shape[0]):
         f, t, Sxx = scipy.signal.spectrogram(eeg[ch_idx], fs=fs, nperseg=nperseg, noverlap=noverlap)
-        # Log transform for better visibility and training range
+
         Sxx = np.log1p(Sxx)
         specs.append(Sxx)
-    
+
     return np.array(specs)
 
 def preprocess_sample(file_path):
@@ -90,39 +89,30 @@ def preprocess_sample(file_path):
     if raw_eeg is None:
         return None, None
 
-    # 1. Filtering
     eeg = apply_notch_filter(raw_eeg, fs)
     eeg = apply_bandpass_filter(eeg, fs)
 
-    # 2. Normalize raw signal (processed)
     eeg_norm = normalize_channel_wise(eeg)
 
-    
-    # 3. Generate Spectrogram (from filtered data)
     eeg_norm = normalize_channel_wise(eeg)
-    
-    # 4. Pad/Crop to Fixed Size
-    # Target: (128, 1000)
+
     MAX_CH = 128
     MAX_TIME = 1000
-    
+
     C, T = eeg_norm.shape
-    
-    # Pad Channels
+
     if C < MAX_CH:
         pad_c = np.zeros((MAX_CH - C, T), dtype=eeg_norm.dtype)
         eeg_fixed = np.vstack([eeg_norm, pad_c])
     else:
         eeg_fixed = eeg_norm[:MAX_CH, :]
-        
-    # Pad/Crop Time
+
     processed_C, processed_T = eeg_fixed.shape
     if processed_T < MAX_TIME:
         pad_t = np.zeros((processed_C, MAX_TIME - processed_T), dtype=eeg_fixed.dtype)
         eeg_fixed = np.hstack([eeg_fixed, pad_t])
     else:
         eeg_fixed = eeg_fixed[:, :MAX_TIME]
-        
 
     specs = generate_spectrogram(eeg_fixed, fs)
     return torch.tensor(eeg_fixed, dtype=torch.float32), torch.tensor(specs, dtype=torch.float32)
